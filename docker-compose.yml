@@ -4,6 +4,8 @@ services:
     image: postgres:14.5
     ports:
       - 127.0.0.1:5432:5432
+    expose:
+      - 5432
     env_file: 
       - .env
     volumes: 
@@ -13,9 +15,17 @@ services:
     image: redis:7
     ports:
       - 127.0.0.1:6379:6379
+    expose:
+      - 6379
   api:
     image: ghcr.io/tasgon/observable_web:latest
+    # build: ../backend
+    volumes:
+      - /etc/letsencrypt:/opt/certs
     env_file:
       - .env
     ports:
-      - 443:8080
+      - 8082:8080
+    depends_on:
+      - db
+      - redis
